@@ -1,0 +1,10 @@
+/Users/revanthgundala/projects/scaling-eth-hackathon/demos/bonsai-pay/target/riscv-guest/riscv32im-risc0-zkvm-elf/release/deps/libgetrandom-bd080d550b20c33c.rmeta: /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.12/src/lib.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.12/src/error.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.12/src/util.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.12/src/custom.rs
+
+/Users/revanthgundala/projects/scaling-eth-hackathon/demos/bonsai-pay/target/riscv-guest/riscv32im-risc0-zkvm-elf/release/deps/libgetrandom-bd080d550b20c33c.rlib: /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.12/src/lib.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.12/src/error.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.12/src/util.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.12/src/custom.rs
+
+/Users/revanthgundala/projects/scaling-eth-hackathon/demos/bonsai-pay/target/riscv-guest/riscv32im-risc0-zkvm-elf/release/deps/getrandom-bd080d550b20c33c.d: /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.12/src/lib.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.12/src/error.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.12/src/util.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.12/src/custom.rs
+
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.12/src/lib.rs:
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.12/src/error.rs:
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.12/src/util.rs:
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/getrandom-0.2.12/src/custom.rs:

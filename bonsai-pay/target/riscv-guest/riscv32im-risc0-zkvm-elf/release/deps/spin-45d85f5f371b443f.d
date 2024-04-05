@@ -1,0 +1,10 @@
+/Users/revanthgundala/projects/scaling-eth-hackathon/demos/bonsai-pay/target/riscv-guest/riscv32im-risc0-zkvm-elf/release/deps/libspin-45d85f5f371b443f.rmeta: /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spin-0.5.2/src/lib.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spin-0.5.2/src/mutex.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spin-0.5.2/src/rw_lock.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spin-0.5.2/src/once.rs
+
+/Users/revanthgundala/projects/scaling-eth-hackathon/demos/bonsai-pay/target/riscv-guest/riscv32im-risc0-zkvm-elf/release/deps/libspin-45d85f5f371b443f.rlib: /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spin-0.5.2/src/lib.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spin-0.5.2/src/mutex.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spin-0.5.2/src/rw_lock.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spin-0.5.2/src/once.rs
+
+/Users/revanthgundala/projects/scaling-eth-hackathon/demos/bonsai-pay/target/riscv-guest/riscv32im-risc0-zkvm-elf/release/deps/spin-45d85f5f371b443f.d: /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spin-0.5.2/src/lib.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spin-0.5.2/src/mutex.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spin-0.5.2/src/rw_lock.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spin-0.5.2/src/once.rs
+
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spin-0.5.2/src/lib.rs:
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spin-0.5.2/src/mutex.rs:
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spin-0.5.2/src/rw_lock.rs:
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/spin-0.5.2/src/once.rs:
