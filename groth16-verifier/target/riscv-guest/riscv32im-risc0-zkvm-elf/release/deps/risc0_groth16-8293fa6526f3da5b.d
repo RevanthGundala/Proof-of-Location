@@ -1,0 +1,9 @@
+/Users/revanthgundala/projects/scaling-eth-hackathon/groth16-verifier/target/riscv-guest/riscv32im-risc0-zkvm-elf/release/deps/librisc0_groth16-8293fa6526f3da5b.rmeta: /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/risc0-groth16-0.21.0/src/lib.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/risc0-groth16-0.21.0/src/data_structures.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/risc0-groth16-0.21.0/src/verifier.rs
+
+/Users/revanthgundala/projects/scaling-eth-hackathon/groth16-verifier/target/riscv-guest/riscv32im-risc0-zkvm-elf/release/deps/librisc0_groth16-8293fa6526f3da5b.rlib: /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/risc0-groth16-0.21.0/src/lib.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/risc0-groth16-0.21.0/src/data_structures.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/risc0-groth16-0.21.0/src/verifier.rs
+
+/Users/revanthgundala/projects/scaling-eth-hackathon/groth16-verifier/target/riscv-guest/riscv32im-risc0-zkvm-elf/release/deps/risc0_groth16-8293fa6526f3da5b.d: /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/risc0-groth16-0.21.0/src/lib.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/risc0-groth16-0.21.0/src/data_structures.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/risc0-groth16-0.21.0/src/verifier.rs
+
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/risc0-groth16-0.21.0/src/lib.rs:
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/risc0-groth16-0.21.0/src/data_structures.rs:
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/risc0-groth16-0.21.0/src/verifier.rs:

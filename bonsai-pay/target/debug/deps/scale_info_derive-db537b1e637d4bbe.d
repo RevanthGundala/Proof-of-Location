@@ -1,8 +1,0 @@
-/Users/revanthgundala/projects/scaling-eth-hackathon/demos/bonsai-pay/target/debug/deps/libscale_info_derive-db537b1e637d4bbe.dylib: /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/scale-info-derive-2.11.1/src/lib.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/scale-info-derive-2.11.1/src/attr.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/scale-info-derive-2.11.1/src/trait_bounds.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/scale-info-derive-2.11.1/src/utils.rs
-
-/Users/revanthgundala/projects/scaling-eth-hackathon/demos/bonsai-pay/target/debug/deps/scale_info_derive-db537b1e637d4bbe.d: /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/scale-info-derive-2.11.1/src/lib.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/scale-info-derive-2.11.1/src/attr.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/scale-info-derive-2.11.1/src/trait_bounds.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/scale-info-derive-2.11.1/src/utils.rs
-
-/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/scale-info-derive-2.11.1/src/lib.rs:
-/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/scale-info-derive-2.11.1/src/attr.rs:
-/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/scale-info-derive-2.11.1/src/trait_bounds.rs:
-/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/scale-info-derive-2.11.1/src/utils.rs:

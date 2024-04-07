@@ -1,0 +1,7 @@
+/Users/revanthgundala/projects/scaling-eth-hackathon/groth16-verifier/target/riscv-guest/release/deps/libtracing_attributes-34df2d6eb50daaa6.dylib: /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tracing-attributes-0.1.27/src/lib.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tracing-attributes-0.1.27/src/attr.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tracing-attributes-0.1.27/src/expand.rs
+
+/Users/revanthgundala/projects/scaling-eth-hackathon/groth16-verifier/target/riscv-guest/release/deps/tracing_attributes-34df2d6eb50daaa6.d: /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tracing-attributes-0.1.27/src/lib.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tracing-attributes-0.1.27/src/attr.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tracing-attributes-0.1.27/src/expand.rs
+
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tracing-attributes-0.1.27/src/lib.rs:
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tracing-attributes-0.1.27/src/attr.rs:
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tracing-attributes-0.1.27/src/expand.rs:

@@ -1,0 +1,42 @@
+In file included from /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/protobuf-src-1.1.0+21.5/protobuf/src/google/protobuf/generated_message_tctable_lite.cc:36:
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/protobuf-src-1.1.0+21.5/protobuf/src/google/protobuf/generated_message_tctable_impl.h:256:1: warning: function declared 'noreturn' should not return [-Winvalid-noreturn]
+}
+^
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/protobuf-src-1.1.0+21.5/protobuf/src/google/protobuf/generated_message_tctable_lite.cc:57:15: note: in instantiation of function template specialization 'google::protobuf::internal::AlignFail<4UL>' requested here
+template void AlignFail<4>(uintptr_t);
+              ^
+In file included from /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/protobuf-src-1.1.0+21.5/protobuf/src/google/protobuf/generated_message_tctable_lite.cc:36:
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/protobuf-src-1.1.0+21.5/protobuf/src/google/protobuf/generated_message_tctable_impl.h:256:1: warning: function declared 'noreturn' should not return [-Winvalid-noreturn]
+}
+^
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/protobuf-src-1.1.0+21.5/protobuf/src/google/protobuf/generated_message_tctable_lite.cc:58:15: note: in instantiation of function template specialization 'google::protobuf::internal::AlignFail<8UL>' requested here
+template void AlignFail<8>(uintptr_t);
+              ^
+In file included from /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/protobuf-src-1.1.0+21.5/protobuf/src/google/protobuf/generated_message_tctable_lite.cc:36:
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/protobuf-src-1.1.0+21.5/protobuf/src/google/protobuf/generated_message_tctable_impl.h:256:1: warning: function declared 'noreturn' should not return [-Winvalid-noreturn]
+}
+^
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/protobuf-src-1.1.0+21.5/protobuf/src/google/protobuf/generated_message_tctable_impl.h:384:7: note: in instantiation of function template specialization 'google::protobuf::internal::AlignFail<1UL>' requested here
+      AlignFail<alignof(T)>(reinterpret_cast<uintptr_t>(target));
+      ^
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/protobuf-src-1.1.0+21.5/protobuf/src/google/protobuf/generated_message_tctable_lite.cc:1515:5: note: in instantiation of function template specialization 'google::protobuf::internal::TcParser::RefAt<bool>' requested here
+    RefAt<bool>(msg, entry.offset) = static_cast<bool>(tmp);
+    ^
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/protobuf-src-1.1.0+21.5/protobuf/src/google/protobuf/generated_message_tctable_lite.cc:347:14: warning: unused function 'Offset' [-Wunused-function]
+inline void* Offset(void* base, uint32_t offset) {
+             ^
+4 warnings generated.
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/protobuf-src-1.1.0+21.5/protobuf/src/google/protobuf/stubs/strutil.cc:506:11: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+          sprintf(dest + used, (use_hex ? "\\x%02x" : "\\%03o"),
+          ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/stdio.h:188:1: note: 'sprintf' has been explicitly marked deprecated here
+__deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:215:48: note: expanded from macro '__deprecated_msg'
+        #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+                                                      ^
+1 warning generated.
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/protobuf-src-1.1.0+21.5/protobuf/src/google/protobuf/compiler/cpp/helpers.cc:197:25: warning: unused function 'VerifyInt32TypeToVerifyCustom' [-Wunused-function]
+inline VerifySimpleType VerifyInt32TypeToVerifyCustom(VerifyInt32Type t) {
+                        ^
+1 warning generated.

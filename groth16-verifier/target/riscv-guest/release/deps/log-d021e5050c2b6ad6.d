@@ -1,0 +1,10 @@
+/Users/revanthgundala/projects/scaling-eth-hackathon/groth16-verifier/target/riscv-guest/release/deps/liblog-d021e5050c2b6ad6.rmeta: /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.21/src/lib.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.21/src/macros.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.21/src/serde.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.21/src/__private_api.rs
+
+/Users/revanthgundala/projects/scaling-eth-hackathon/groth16-verifier/target/riscv-guest/release/deps/liblog-d021e5050c2b6ad6.rlib: /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.21/src/lib.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.21/src/macros.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.21/src/serde.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.21/src/__private_api.rs
+
+/Users/revanthgundala/projects/scaling-eth-hackathon/groth16-verifier/target/riscv-guest/release/deps/log-d021e5050c2b6ad6.d: /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.21/src/lib.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.21/src/macros.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.21/src/serde.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.21/src/__private_api.rs
+
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.21/src/lib.rs:
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.21/src/macros.rs:
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.21/src/serde.rs:
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/log-0.4.21/src/__private_api.rs:

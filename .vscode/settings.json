@@ -1,0 +1,3 @@
+{
+  "rust-analyzer.linkedProjects": ["./hello-world/methods/guest/Cargo.toml"]
+}

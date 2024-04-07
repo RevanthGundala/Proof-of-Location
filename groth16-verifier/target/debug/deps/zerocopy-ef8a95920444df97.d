@@ -1,0 +1,13 @@
+/Users/revanthgundala/projects/scaling-eth-hackathon/groth16-verifier/target/debug/deps/libzerocopy-ef8a95920444df97.rmeta: /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zerocopy-0.7.32/src/lib.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zerocopy-0.7.32/src/macros.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zerocopy-0.7.32/src/macro_util.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zerocopy-0.7.32/src/post_monomorphization_compile_fail_tests.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zerocopy-0.7.32/src/util.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zerocopy-0.7.32/src/third_party/rust/layout.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zerocopy-0.7.32/src/wrappers.rs
+
+/Users/revanthgundala/projects/scaling-eth-hackathon/groth16-verifier/target/debug/deps/zerocopy-ef8a95920444df97.d: /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zerocopy-0.7.32/src/lib.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zerocopy-0.7.32/src/macros.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zerocopy-0.7.32/src/macro_util.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zerocopy-0.7.32/src/post_monomorphization_compile_fail_tests.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zerocopy-0.7.32/src/util.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zerocopy-0.7.32/src/third_party/rust/layout.rs /Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zerocopy-0.7.32/src/wrappers.rs
+
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zerocopy-0.7.32/src/lib.rs:
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zerocopy-0.7.32/src/macros.rs:
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zerocopy-0.7.32/src/macro_util.rs:
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zerocopy-0.7.32/src/post_monomorphization_compile_fail_tests.rs:
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zerocopy-0.7.32/src/util.rs:
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zerocopy-0.7.32/src/third_party/rust/layout.rs:
+/Users/revanthgundala/.cargo/registry/src/index.crates.io-6f17d22bba15001f/zerocopy-0.7.32/src/wrappers.rs:
+
+# env-dep:CARGO_PKG_VERSION=0.7.32
