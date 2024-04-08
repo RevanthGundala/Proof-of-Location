@@ -1,18 +1,18 @@
 #![no_main]
-// If you want to try std support, also update the guest Cargo.toml file
 
 use risc0_zkvm::guest::env;
-
 risc0_zkvm::guest::entry!(main);
+use std::str::FromStr;
+use serde_json;
 
 
 fn main() {
-    // TODO: Implement your guest code here
-
+    // TODO: Implement your guest code he   re
     // read the input
-    let input: u32 = env::read();
+    let input: String = env::read();
+    let input: serde_json::Value = serde_json::Value::from_str(&input).unwrap();
     // TODO: do something with the input
-    println!("Input: {}", input);
+    println!("Response: {}", input);
 
     // write public output to the journal
     env::commit(&input);

@@ -5,22 +5,28 @@ use methods::{
 };
 use risc0_zkvm::{default_prover, ExecutorEnv};
 
-use tokio::net::TcpStream;
-use tokio::io::AsyncWriteExt as _;
 use tokio_util::compat::{FuturesAsyncReadCompatExt, TokioAsyncReadCompatExt};
 
 use http_body_util::{BodyExt, Empty};
 use hyper::{body::Bytes, Request, StatusCode};
 use hyper_util::rt::TokioIo;
-use std::{env, ops::Range, str};
+use std::{env, ops::Range, str, time::Duration};
 use serde_json;
 use dotenv;
 use tracing::debug;
+use httparse;
+use http::Response;
+use serde::{ser, de};
+
 
 // Specify path
 use tlsn_examples::request_notarization;
-use tlsn_core::proof::TlsProof;
+use tlsn_core::proof::{SessionProof, TlsProof};
 use tlsn_prover::tls::{Prover, ProverConfig};
+
+use color_eyre::eyre::Result;
+
+use elliptic_curve::pkcs8::DecodePublicKey;
 
 const SERVER_DOMAIN: &str = "discord.com";
 const NOTARY_HOST: &str = "127.0.0.1";
@@ -33,7 +39,6 @@ async fn main() {
         .with_env_filter(tracing_subscriber::filter::EnvFilter::from_default_env())
         .init();
 
-    
     dotenv::dotenv().ok();
     let channel_id = env::var("CHANNEL_ID").unwrap();
     let auth_token = env::var("AUTHORIZATION").unwrap();
@@ -44,6 +49,7 @@ async fn main() {
 
     let config = ProverConfig::builder()
         .id(session_id)
+        .server_dns(SERVER_DOMAIN)
         .build()
         .unwrap();
 
@@ -97,7 +103,8 @@ async fn main() {
     let payload = response.into_body().collect().await.unwrap().to_bytes();
     let parsed =
         serde_json::from_str::<serde_json::Value>(&String::from_utf8_lossy(&payload)).unwrap();
-    debug!("{}", serde_json::to_string_pretty(&parsed).unwrap());
+   let parsed = serde_json::to_string_pretty(&parsed).unwrap();
+    debug!("{}", parsed);
 
     // The Prover task should be done now, so we can grab it.
     let prover = prover_task.await.unwrap().unwrap();
@@ -128,17 +135,17 @@ async fn main() {
 
     debug!("Notarization complete!");
 
-    // Dump the notarized session to a file
-    let mut file = tokio::fs::File::create("discord_dm_notarized_session.json")
-        .await
-        .unwrap();
-    file.write_all(
-        serde_json::to_string_pretty(&notarized_session)
-            .unwrap()
-            .as_bytes(),
-    )
-    .await
-    .unwrap();
+    // // Dump the notarized session to a file
+    // let mut file = tokio::fs::File::create("discord_dm_notarized_session.json")
+    //     .await
+    //     .unwrap();
+    // file.write_all(
+    //     serde_json::to_string_pretty(&notarized_session)
+    //         .unwrap()
+    //         .as_bytes(),
+    // )
+    // .await
+    // .unwrap();
 
     let session_proof = notarized_session.session_proof();
 
@@ -157,14 +164,17 @@ async fn main() {
     };
 
     // Dump the proof to a file.
-    let mut file = tokio::fs::File::create("discord_dm_proof.json")
-        .await
-        .unwrap();
-    file.write_all(serde_json::to_string_pretty(&proof).unwrap().as_bytes())
-        .await
-        .unwrap();
+    // let mut file = tokio::fs::File::create("discord_dm_proof.json")
+    //     .await
+    //     .unwrap();
+    // file.write_all(serde_json::to_string_pretty(&proof).unwrap().as_bytes())
+    //     .await
+    //     .unwrap();
 
-    let input: u32 = 15 * u32::pow(2, 27) + 1;
+    let _ = verify_tls_proof(proof).unwrap();
+
+    let input = parsed;
+
     let env = ExecutorEnv::builder()
         .write(&input)
         .unwrap()
@@ -182,7 +192,7 @@ async fn main() {
     // TODO: Implement code for retrieving receipt journal here.
 
     // For example:
-    let _output: u32 = receipt.journal.decode().unwrap();
+    let output: u32 = receipt.journal.decode().unwrap();
 
     // The receipt was verified at the end of proving, but the below code is an
     // example of how someone else could verify this receipt.
@@ -190,7 +200,7 @@ async fn main() {
         .verify(GUEST_ID)
         .unwrap();
 
-    println!("Hello, world! I generated a proof of guest execution! {:?}", _output);
+    println!("Hello, world! I generated a proof of guest execution! {:?}", output);
 }
 
 
@@ -225,4 +235,74 @@ fn find_ranges(seq: &[u8], sub_seq: &[&[u8]]) -> (Vec<Range<usize>>, Vec<Range<u
     }
 
     (public_ranges, private_ranges)
+}
+
+fn verify_tls_proof(proof: TlsProof) -> Result<()> {
+    // let proof = std::fs::read_to_string("discord_dm_proof.json").unwrap();
+    // let proof: TlsProof = serde_json::from_str(proof.as_str()).unwrap();
+
+    let TlsProof {
+        // The session proof establishes the identity of the server and the commitments
+        // to the TLS transcript.
+        session,
+        // The substrings proof proves select portions of the transcript, while redacting
+        // anything the Prover chose not to disclose.
+        substrings,
+    } = proof;
+
+    // Verify the session proof against the Notary's public key
+    //
+    // This verifies the identity of the server using a default certificate verifier which trusts
+    // the root certificates from the `webpki-roots` crate.
+    session
+        .verify_with_default_cert_verifier(notary_pubkey())
+        .unwrap();
+
+    let SessionProof {
+        // The session header that was signed by the Notary is a succinct commitment to the TLS transcript.
+        header,
+        // This is the session_info, which contains the server_name, that is checked against the
+        // certificate chain shared in te TLS handshake.
+        session_info,
+        ..
+    } = session;
+
+    // The time at which the session was recorded
+    let time = chrono::DateTime::UNIX_EPOCH + Duration::from_secs(header.time());
+
+    // Verify the substrings proof against the session header.
+    //
+    // This returns the redacted transcripts
+    let (mut sent, mut recv) = substrings.verify(&header).unwrap();
+
+    // Replace the bytes which the Prover chose not to disclose with 'X'
+    sent.set_redacted(b'X');
+    recv.set_redacted(b'X');
+
+    println!("-------------------------------------------------------------------");
+    println!(
+        "Successfully verified that the bytes below came from a session with {:?} at {}.",
+        session_info.server_name, time
+    );
+    println!("Note that the bytes which the Prover chose not to disclose are shown as X.");
+    println!();
+    println!("Bytes sent:");
+    println!();
+    print!("{}", String::from_utf8(sent.data().to_vec()).unwrap());
+    println!();
+    println!("Bytes received:");
+    println!();
+    println!("{}", String::from_utf8(recv.data().to_vec()).unwrap());
+    
+    println!("-------------------------------------------------------------------");
+    Ok(())
+}
+
+/// Returns a Notary pubkey trusted by this Verifier
+fn notary_pubkey() -> p256::PublicKey {
+    let pem_file = str::from_utf8(include_bytes!(
+        "../../tlsn/notary-server/fixture/notary/notary.pub"
+    ))
+    .unwrap();
+    p256::PublicKey::from_public_key_pem(pem_file).unwrap()
 }
