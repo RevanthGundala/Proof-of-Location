@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 ## Video Demo
 
 ## Deployed Contracts
@@ -9,6 +10,8 @@
 
 ### OP Avail Sepolia Testnet
 =======
+=======
+>>>>>>> 29348be (chore: init from https://github.com/risc0/bonsai-foundry-template at 83b3129)
 # RISC Zero Foundry Template
 
 > **Note: This software is not production ready. Do not use in production.**
@@ -197,4 +200,7 @@ Below are the primary files in the project directory
 [journal]: https://dev.risczero.com/terminology#journal
 [publisher]: ./apps/README.md
 [zkVM program]: ./methods/guest/
+<<<<<<< HEAD
+>>>>>>> 29348be (chore: init from https://github.com/risc0/bonsai-foundry-template at 83b3129)
+=======
 >>>>>>> 29348be (chore: init from https://github.com/risc0/bonsai-foundry-template at 83b3129)
