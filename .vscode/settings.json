@@ -1,3 +1,12 @@
 {
+<<<<<<< HEAD
   "rust-analyzer.linkedProjects": ["./hello-world/methods/guest/Cargo.toml"]
 }
+=======
+    "rust-analyzer.linkedProjects": [
+        "./apps/Cargo.toml",
+        "./methods/Cargo.toml",
+        "./methods/guest/Cargo.toml",
+    ]
+}
+>>>>>>> 29348be (chore: init from https://github.com/risc0/bonsai-foundry-template at 83b3129)
