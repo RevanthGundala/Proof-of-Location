@@ -25,9 +25,8 @@ fn main() {
     // Decode and parse the input
     let number = <U256>::abi_decode(&input_bytes, true).unwrap();
 
-    // Run the computation.
-    // In this case, asserting that the provided number is even.
-    assert!(!number.bit(0), "number is not even");
+    // TODO: Check range
+    // assert!(cities.contains(&city), "City not found: {}", city);
 
     // Commit the journal that will be received by the application contract.
     // Journal is encoded using Solidity ABI for easy decoding in the app contract.

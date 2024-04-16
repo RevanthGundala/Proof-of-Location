@@ -1,1 +1,0 @@
-/Users/revanthgundala/projects/scaling-eth-hackathon/groth16-verifier/target/riscv-guest/riscv32im-risc0-zkvm-elf/release/groth16_verifier: /Users/revanthgundala/projects/scaling-eth-hackathon/groth16-verifier/methods/guest/src/bin/groth16_verifier.rs
