@@ -16,6 +16,7 @@
 // to the Bonsai proving service and publish the received proofs directly
 // to your deployed app contract.
 
+use risc0_zkvm::serde::{from_slice, to_vec};
 use alloy_primitives::{FixedBytes, U256};
 use alloy_sol_types::{sol, SolInterface, SolValue};
 use anyhow::{Context, Result};
@@ -28,7 +29,7 @@ use hyper::{body::Bytes, Request, StatusCode};
 use hyper_util::rt::TokioIo;
 use std::{env, str};
 use serde_json;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use dotenv;
 use tlsn_examples::request_notarization;
 use tlsn_core::proof::TlsProof;
@@ -42,11 +43,23 @@ use axum::{
 };
 use tower_http::cors::CorsLayer;
 use std::sync::Arc;
+use std::sync::Mutex;
 use tokio::sync::oneshot;
-use risc0_zkvm::{default_prover, ExecutorEnv, Receipt};
 
-struct AppState {
-    sender: TxSender
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Input {
+    start_long: f64,
+    start_lat: f64,
+    dest_long: f64,
+    dest_lat: f64,
+    distance: f64,
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
+pub struct PublicInput {
+    dest_long: f64,
+    dest_lat: f64,
+    distance: f64,
 }
 
 #[derive(Deserialize)]
@@ -89,20 +102,9 @@ struct Args {
 async fn main() -> Result<()> {
     env_logger::init();
 
-    let args = Args::parse();
-
-    // Create a new `TxSender`.
-    let tx_sender = TxSender::new(
-        args.chain_id,
-        &args.rpc_url,
-        &args.eth_wallet_private_key,
-        &args.contract,
-    )?;
-
     let app = Router::new()
         .route("/api/prove", post(prove))
-        .layer(CorsLayer::permissive())
-        .with_state(Arc::new(AppState { sender: tx_sender }));
+        .layer(CorsLayer::permissive());
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await.unwrap();
     axum::serve(listener, app).await.unwrap();
@@ -110,7 +112,8 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
-async fn prove(State(state): State<Arc<AppState>>, Json(payload): Json<Payload>) {
+async fn prove(Json(payload): Json<Payload>) -> StatusCode {
+    println!("Proving");
     let (ip, dest_long, dest_lat, distance) = (payload.ip, payload.longitude, payload.latitude, payload.distance);
 
     let start_long = geolocation::find(ip.as_str()).unwrap().longitude;
@@ -119,22 +122,46 @@ async fn prove(State(state): State<Arc<AppState>>, Json(payload): Json<Payload>)
     // TODO: Find the distance between the user's location and the destination location
     // Send an off-chain proof request to the Bonsai proving service.
     let (tx, rx) = oneshot::channel();
+    let input = Input {
+        start_long: start_long.parse::<f64>().unwrap(),
+        start_lat: start_lat.parse::<f64>().unwrap(),
+        dest_long: dest_long.parse::<f64>().unwrap(),
+        dest_lat: dest_lat.parse::<f64>().unwrap(),
+        distance: distance.parse::<f64>().unwrap(),
+    };
+    let args = Args::parse();
     std::thread::spawn(move || {
-        prove_and_send_transaction(state, start_long.parse::<f64>().unwrap(), start_lat.parse::<f64>().unwrap(), dest_long.parse::<f64>().unwrap(), dest_lat.parse::<f64>().unwrap(), distance.parse::<f64>().unwrap(), tx);
+        prove_and_send_transaction(args, input, tx);
     });
+
+    match rx.await {
+        Ok(_result) => StatusCode::OK,
+        Err(_) => StatusCode::INTERNAL_SERVER_ERROR,
+    }
 }
 
 fn prove_and_send_transaction(
-    state: Arc<AppState>,
-    start_long: f64,
-    start_lat: f64,
-    dest_long: f64,
-    dest_lat: f64,
-    distance: f64,
+    args: Args,
+    input: Input,
     tx: oneshot::Sender<(Vec<u8>, FixedBytes<32>, Vec<u8>)>,
 ) {
-    // let input = start_long.as_bytes();
-    // let (journal, post_state_digest, seal) = BonsaiProver::prove(IS_EVEN_ELF, &input).unwrap();
+     // Create a new `TxSender`.
+     let sender = TxSender::new(
+        args.chain_id,
+        &args.rpc_url,
+        &args.eth_wallet_private_key,
+        &args.contract,
+    ).expect("Tx sender");
+    let binding = bincode::serialize(&input).unwrap();
+    let serialized_input = binding.as_slice();
+    let public_input = PublicInput {
+        dest_long: input.dest_long,
+        dest_lat: input.dest_lat,
+        distance: input.distance,
+    };
+    let (journal, post_state_digest, seal) = BonsaiProver::prove(IS_EVEN_ELF, serialized_input).unwrap();
+    // assert!(public_input == from_slice(&journal).unwrap(), "Public input does not match");
+    println!("Proved");
     let seal_clone = seal.clone();
     let x = U256::abi_decode(&journal, true).context("decoding journal data").unwrap();
     let calldata = IVerifier::IVerifierCalls::set(IVerifier::setCall {
@@ -145,9 +172,10 @@ fn prove_and_send_transaction(
     .abi_encode();
 
     // Send the calldata to Ethereum.
+    println!("Sending calldata");
     let runtime = tokio::runtime::Runtime::new().expect("failed to start new tokio runtime");
     runtime
-        .block_on(state.sender.send(calldata))
+        .block_on(sender.send(calldata))
         .expect("failed to send tx");
 
     tx.send((journal, post_state_digest, seal))

@@ -8,12 +8,24 @@ import { useAccount } from "wagmi";
 import GoogleMap from "@/components/ui/GoogleMap";
 import { Input } from "@/components/ui/input";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 export default function Home() {
   const [proved, setProved] = useState(false);
   const [distance, setDistance] = useState("1.0");
   const [location, setLocation] = useState("United States");
-  const [latitude, setLatitude] = useState(0);
-  const [longitude, setLongitude] = useState(0);
+  const [latitude, setLatitude] = useState("0");
+  const [longitude, setLongitude] = useState("0");
 
   const account = useAccount({
     config,
@@ -45,6 +57,7 @@ export default function Home() {
       console.log(data);
     } catch (e) {
       console.log(e);
+      alert("Error creating proof");
     }
   }
 
@@ -56,8 +69,8 @@ export default function Home() {
       .then((response) => response.json())
       .then((locationData) => {
         const { lat, lng } = locationData.results[0].geometry.location;
-        setLatitude(lat);
-        setLongitude(lng);
+        setLatitude(lat.toString());
+        setLongitude(lng.toString());
       })
       .catch((e) => console.log(e));
   }, [location]);
@@ -108,8 +121,8 @@ export default function Home() {
 
           {
             <GoogleMap
-              lat={latitude}
-              lng={longitude}
+              lat={parseFloat(latitude)}
+              lng={parseFloat(longitude)}
               distance={parseFloat(distance)}
             />
           }

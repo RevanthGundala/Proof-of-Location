@@ -13,25 +13,52 @@
 // limitations under the License.
 
 use std::io::Read;
-use std::str;
-use alloy_primitives::U256;
 use alloy_sol_types::SolValue;
 use risc0_zkvm::guest::env;
+use serde::{Deserialize, Serialize};
+use alloy_primitives::U256;
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Input {
+    start_long: f64,
+    start_lat: f64,
+    dest_long: f64,
+    dest_lat: f64,
+    distance: f64,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PublicInput {
+    dest_long: f64,
+    dest_lat: f64,
+    distance: f64,
+}
 
 fn main() {
     // Read the input data for this application.
     let mut input_bytes = Vec::<u8>::new();
     env::stdin().read_to_end(&mut input_bytes).unwrap();
     // Decode and parse the input
+    let input: Input = bincode::deserialize(&input_bytes).unwrap();
 
-    let start_long = 0f64;
-    let start_lat = 0f64;
-    let dest_long = 0f64;
-    let dest_lat = 0f64;
-    let distance = 0f64;
+    let public_input = PublicInput {
+        dest_long: input.dest_long,
+        dest_lat: input.dest_lat,
+        distance: input.distance,
+    };
+
+    //env::commit(&public_input);
+    let number: U256 = "5".parse().unwrap();
+    env::commit_slice(number.abi_encode().as_slice());
+
+    let start_long = input.start_long;
+    let start_lat = input.start_lat;
+    let dest_long = input.dest_long;
+    let dest_lat = input.dest_lat;
+    let distance = input.distance;
 
     // Calculate if distance is within specified range using Haversine Formula
-    assert!(is_within_distance(start_lat, start_long, dest_lat, dest_long, distance));
+    assert!(is_within_distance(start_lat, start_long, dest_lat, dest_long, distance), "Distance is not within specified range");
 }
 
 fn haversine(lat1: f64, lon1: f64, lat2: f64, lon2: f64) -> f64 {

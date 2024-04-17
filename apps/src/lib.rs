@@ -31,6 +31,7 @@ use tlsn_core::proof::{SessionProof, TlsProof};
 use tlsn_prover::tls::{Prover, ProverConfig};
 use std::{env, ops::Range, str, time::Duration};
 use elliptic_curve::pkcs8::DecodePublicKey;
+use serde::{Deserialize, Serialize};
 
 /// Wrapper of a `SignerMiddleware` client to send transactions to the given
 /// contract's `Address`.
@@ -63,11 +64,11 @@ impl TxSender {
             .from(self.client.address())
             .data(calldata);
 
-        log::info!("Transaction request: {:?}", &tx);
+        println!("Transaction request: {:?}", &tx);
 
         let tx = self.client.send_transaction(tx, None).await?.await?;
 
-        log::info!("Transaction receipt: {:?}", &tx);
+        println!("Transaction receipt: {:?}", &tx);
 
         Ok(tx)
     }
@@ -84,9 +85,7 @@ impl BonsaiProver {
         // Compute the image_id, then upload the ELF with the image_id as its key.
         let image_id = compute_image_id(elf)?;
         let image_id_hex = image_id.to_string();
-        println!("Upload img");
         client.upload_img(&image_id_hex, elf.to_vec())?;
-        println!("uploaded img");
         log::info!("Image ID: 0x{}", image_id_hex);
 
         // Prepare input data and upload it.
