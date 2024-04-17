@@ -43,6 +43,7 @@ use axum::{
 use tower_http::cors::CorsLayer;
 use std::sync::Arc;
 use tokio::sync::oneshot;
+use risc0_zkvm::{default_prover, ExecutorEnv, Receipt};
 
 struct AppState {
     sender: TxSender
@@ -51,9 +52,11 @@ struct AppState {
 #[derive(Deserialize)]
 struct Payload {
     ip: String,
-    location: String,
+    longitude: String,
+    latitude: String,
     distance: String,
 }
+
 
 sol! {
     interface IVerifier {
@@ -107,30 +110,31 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
-async fn prove(State(state): State<Arc<AppState>>, Json(payload): Json<Payload>)  {
-    let (ip, location, distance) = (payload.ip, payload.location, payload.distance);
-    println!("IP: {}, Location: {}, Distance: {}", ip, location, distance);
-    // let info = geolocation::find(ip.as_str()).unwrap();
-    // println!("City: {}", info.city);
-    
-    // ABI encode the input for the guest binary, to match what the `is_even` guest
-    // code expects.
-    // let input = args.input.abi_encode();
-    
+async fn prove(State(state): State<Arc<AppState>>, Json(payload): Json<Payload>) {
+    let (ip, dest_long, dest_lat, distance) = (payload.ip, payload.longitude, payload.latitude, payload.distance);
+
+    let start_long = geolocation::find(ip.as_str()).unwrap().longitude;
+    let start_lat = geolocation::find(ip.as_str()).unwrap().latitude;
+
+    // TODO: Find the distance between the user's location and the destination location
     // Send an off-chain proof request to the Bonsai proving service.
     let (tx, rx) = oneshot::channel();
     std::thread::spawn(move || {
-        prove_and_send_transaction(state, ip, tx);
+        prove_and_send_transaction(state, start_long.parse::<f64>().unwrap(), start_lat.parse::<f64>().unwrap(), dest_long.parse::<f64>().unwrap(), dest_lat.parse::<f64>().unwrap(), distance.parse::<f64>().unwrap(), tx);
     });
 }
 
 fn prove_and_send_transaction(
     state: Arc<AppState>,
-    ip: String,
+    start_long: f64,
+    start_lat: f64,
+    dest_long: f64,
+    dest_lat: f64,
+    distance: f64,
     tx: oneshot::Sender<(Vec<u8>, FixedBytes<32>, Vec<u8>)>,
 ) {
-    let input = ip.as_bytes();
-    let (journal, post_state_digest, seal) = BonsaiProver::prove(IS_EVEN_ELF, &input).unwrap();
+    // let input = start_long.as_bytes();
+    // let (journal, post_state_digest, seal) = BonsaiProver::prove(IS_EVEN_ELF, &input).unwrap();
     let seal_clone = seal.clone();
     let x = U256::abi_decode(&journal, true).context("decoding journal data").unwrap();
     let calldata = IVerifier::IVerifierCalls::set(IVerifier::setCall {

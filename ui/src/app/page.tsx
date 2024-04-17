@@ -1,19 +1,23 @@
 "use client";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { getAccount } from "@wagmi/core";
 import { config } from "./layout";
+import { useAccount } from "wagmi";
 import GoogleMap from "@/components/ui/GoogleMap";
 import { Input } from "@/components/ui/input";
 
 export default function Home() {
   const [proved, setProved] = useState(false);
-  const [distance, setDistance] = useState("1");
-  const [location, setLocation] = useState("");
-  const { status } = getAccount(config);
-  console.log(status);
+  const [distance, setDistance] = useState("1.0");
+  const [location, setLocation] = useState("United States");
+  const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
+
+  const account = useAccount({
+    config,
+  });
   async function getIPAddress() {
     try {
       console.log("Fetching IP Address");
@@ -35,14 +39,28 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ip, location, distance }),
+        body: JSON.stringify({ ip, longitude, latitude, distance }),
       });
-      const data = await res.json();
+      const data = await res.text();
       console.log(data);
     } catch (e) {
       console.log(e);
     }
   }
+
+  useEffect(() => {
+    console.log(location);
+    fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?address=${location}&key=AIzaSyAG_BnN7PTxVwK07qYAoJdgff7jhsxCBV4`
+    )
+      .then((response) => response.json())
+      .then((locationData) => {
+        const { lat, lng } = locationData.results[0].geometry.location;
+        setLatitude(lat);
+        setLongitude(lng);
+      })
+      .catch((e) => console.log(e));
+  }, [location]);
 
   return (
     <>
@@ -58,7 +76,7 @@ export default function Home() {
             <Input
               className="w-1/4"
               type="Miles"
-              placeholder="1"
+              placeholder="1.0"
               onChange={(e) => setDistance(e.target.value)}
             />
             <Input
@@ -70,8 +88,8 @@ export default function Home() {
           </div>
 
           <Button
-            disabled={status !== "connected"}
-            className="w-fit"
+            disabled={account.status !== "connected"}
+            className="w-fit disabled:cursor-not-allowed disabled:opacity-50"
             variant="outline"
             onClick={async (e) => {
               await prove(e);
@@ -88,7 +106,7 @@ export default function Home() {
             Prove
           </Button>
 
-          {<GoogleMap location={location} />}
+          {<GoogleMap lat={latitude} lng={longitude} />}
         </div>
         <div className="px-4 mt-10">
           <ConnectButton />

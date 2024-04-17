@@ -16,22 +16,48 @@ use std::io::Read;
 use std::str;
 use alloy_primitives::U256;
 use alloy_sol_types::SolValue;
-use risc0_zkvm::guest::{env::log};
 use risc0_zkvm::guest::env;
-// use geolocation;
 
 fn main() {
     // Read the input data for this application.
     let mut input_bytes = Vec::<u8>::new();
     env::stdin().read_to_end(&mut input_bytes).unwrap();
     // Decode and parse the input
-    let ip: String = str::from_utf8(&input_bytes).unwrap().to_string();
 
-    println!("IP: {}", ip);
-    // TODO: Check range    
+    let start_long = 0f64;
+    let start_lat = 0f64;
+    let dest_long = 0f64;
+    let dest_lat = 0f64;
+    let distance = 0f64;
 
-    // Commit the journal that will be received by the application contract.
-    // Journal is encoded using Solidity ABI for easy decoding in the app contract.
-    let number = 5;
-    env::commit_slice(number.abi_encode().as_slice());
+    // Calculate if distance is within specified range using Haversine Formula
+    assert!(is_within_distance(start_lat, start_long, dest_lat, dest_long, distance));
 }
+
+fn haversine(lat1: f64, lon1: f64, lat2: f64, lon2: f64) -> f64 {
+    let earth_radius_miles = 3959.0;
+
+    // Convert latitude and longitude from degrees to radians
+    let lat1_rad = lat1.to_radians();
+    let lon1_rad = lon1.to_radians();
+    let lat2_rad = lat2.to_radians();
+    let lon2_rad = lon2.to_radians();
+
+    // Differences in coordinates
+    let dlat = lat2_rad - lat1_rad;
+    let dlon = lon2_rad - lon1_rad;
+
+    // Haversine formula
+    let a = (dlat / 2.0).sin().powi(2)
+        + lat1_rad.cos() * lat2_rad.cos() * (dlon / 2.0).sin().powi(2);
+    let c = 2.0 * a.sqrt().atan2((1.0 - a).sqrt());
+
+    // Calculate the distance
+    earth_radius_miles * c
+}
+
+fn is_within_distance(lat1: f64, lon1: f64, lat2: f64, lon2: f64, max_distance: f64) -> bool {
+    let distance = haversine(lat1, lon1, lat2, lon2);
+    distance <= max_distance
+}
+

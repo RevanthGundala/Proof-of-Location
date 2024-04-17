@@ -1,10 +1,10 @@
 import React from "react";
+import { APIProvider, Map } from "@vis.gl/react-google-maps";
 
-export default function GoogleMap({ location }: { location: string }) {
-  const src = `https://www.google.com/maps/embed/v1/place?key=AIzaSyAG_BnN7PTxVwK07qYAoJdgff7jhsxCBV4&q=${location}`;
+export default function GoogleMap({ lat, lng }: { lat: number; lng: number }) {
   return (
-    <>
-      <iframe width="600" height="450" loading="lazy" src={src}></iframe>
-    </>
+    <APIProvider apiKey={"AIzaSyAG_BnN7PTxVwK07qYAoJdgff7jhsxCBV4"}>
+      <Map zoom={15} center={{ lat, lng }} />
+    </APIProvider>
   );
 }
