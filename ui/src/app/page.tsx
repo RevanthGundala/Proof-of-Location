@@ -1,15 +1,19 @@
 "use client";
 import { toast } from "sonner";
-
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { getAccount } from "@wagmi/core";
 import { config } from "./layout";
+import GoogleMap from "@/components/ui/GoogleMap";
+import { Input } from "@/components/ui/input";
 
 export default function Home() {
+  const [proved, setProved] = useState(false);
+  const [distance, setDistance] = useState("1");
+  const [location, setLocation] = useState("");
   const { status } = getAccount(config);
-
-  // TODO: Switch to backend
+  console.log(status);
   async function getIPAddress() {
     try {
       console.log("Fetching IP Address");
@@ -25,10 +29,16 @@ export default function Home() {
   async function prove(e: any) {
     e.preventDefault();
     try {
-      console.log("hi");
-      // const res = await fetch("http://localhost:8000/api/prove");
-      // const data = await res.json();
-      // console.log(data);
+      const ip = await getIPAddress();
+      const res = await fetch("http://localhost:8080/api/prove", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ip, location, distance }),
+      });
+      const data = await res.json();
+      console.log(data);
     } catch (e) {
       console.log(e);
     }
@@ -36,11 +46,32 @@ export default function Home() {
 
   return (
     <>
-      <div className="flex flex-row justify-center items-center min-h-screen">
-        {status === "disconnected" ? (
-          <ConnectButton />
-        ) : (
+      <div className="flex flex-row flex-1">
+        <div className="flex flex-col flex-grow mt-10 space-y-8 min-h-screen px-10">
+          <h1 className="font-semibold text-3xl">Proof of Location</h1>
+          <h2 className="mb-20">
+            Enter an Address and Generate a Proof that you are within {distance}{" "}
+            mile(s) of that area.
+          </h2>
+
+          <div className="flex flex-col space-y-6">
+            <Input
+              className="w-1/4"
+              type="Miles"
+              placeholder="1"
+              onChange={(e) => setDistance(e.target.value)}
+            />
+            <Input
+              className="w-1/2"
+              type="location"
+              placeholder="Location"
+              onChange={(e) => setLocation(e.target.value)}
+            />
+          </div>
+
           <Button
+            disabled={status !== "connected"}
+            className="w-fit"
             variant="outline"
             onClick={async (e) => {
               await prove(e);
@@ -51,11 +82,17 @@ export default function Home() {
                   onClick: () => console.log("Closed toast"),
                 },
               });
+              setProved(true);
             }}
           >
-            Access and Prove location
+            Prove
           </Button>
-        )}
+
+          {<GoogleMap location={location} />}
+        </div>
+        <div className="px-4 mt-10">
+          <ConnectButton />
+        </div>
       </div>
     </>
   );

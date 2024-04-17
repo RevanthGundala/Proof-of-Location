@@ -1,7 +1,7 @@
 [workspace]
 resolver = "2"
 members = ["apps", "methods"]
-exclude = ["lib"]
+exclude = ["lib", "tlsn"]
 
 [workspace.package]
 version = "0.1.0"

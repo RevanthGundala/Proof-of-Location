@@ -13,22 +13,25 @@
 // limitations under the License.
 
 use std::io::Read;
-
+use std::str;
 use alloy_primitives::U256;
 use alloy_sol_types::SolValue;
+use risc0_zkvm::guest::{env::log};
 use risc0_zkvm::guest::env;
+// use geolocation;
 
 fn main() {
     // Read the input data for this application.
     let mut input_bytes = Vec::<u8>::new();
     env::stdin().read_to_end(&mut input_bytes).unwrap();
     // Decode and parse the input
-    let number = <U256>::abi_decode(&input_bytes, true).unwrap();
+    let ip: String = str::from_utf8(&input_bytes).unwrap().to_string();
 
-    // TODO: Check range
-    // assert!(cities.contains(&city), "City not found: {}", city);
+    println!("IP: {}", ip);
+    // TODO: Check range    
 
     // Commit the journal that will be received by the application contract.
     // Journal is encoded using Solidity ABI for easy decoding in the app contract.
+    let number = 5;
     env::commit_slice(number.abi_encode().as_slice());
 }
