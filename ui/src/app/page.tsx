@@ -106,7 +106,13 @@ export default function Home() {
             Prove
           </Button>
 
-          {<GoogleMap lat={latitude} lng={longitude} />}
+          {
+            <GoogleMap
+              lat={latitude}
+              lng={longitude}
+              distance={parseFloat(distance)}
+            />
+          }
         </div>
         <div className="px-4 mt-10">
           <ConnectButton />
