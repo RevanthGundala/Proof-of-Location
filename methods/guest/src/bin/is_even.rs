@@ -13,22 +13,24 @@
 // limitations under the License.
 
 use std::io::Read;
-use alloy_sol_types::SolValue;
 use risc0_zkvm::guest::env;
 use serde::{Deserialize, Serialize};
-use alloy_primitives::U256;
+use alloy_sol_types::{sol, SolValue};
+use risc0_zkvm::sha::rust_crypto::{Digest as _, Sha256};
+use alloy_primitives::FixedBytes;
+
+sol! {
+    struct PublicInput {
+        bytes32 dest_long;
+        bytes32 dest_lat;
+        bytes32 distance;
+    }
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Input {
     start_long: f64,
     start_lat: f64,
-    dest_long: f64,
-    dest_lat: f64,
-    distance: f64,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct PublicInput {
     dest_long: f64,
     dest_lat: f64,
     distance: f64,
@@ -41,15 +43,18 @@ fn main() {
     // Decode and parse the input
     let input: Input = bincode::deserialize(&input_bytes).unwrap();
 
+    let dest_long: FixedBytes<32> = FixedBytes::from_slice(Sha256::digest(input.dest_long.to_le_bytes()).as_slice());
+    let dest_lat: FixedBytes<32> = FixedBytes::from_slice(Sha256::digest(input.dest_lat.to_le_bytes()).as_slice());
+    let distance: FixedBytes<32> = FixedBytes::from_slice(Sha256::digest(input.distance.to_le_bytes()).as_slice());
+
     let public_input = PublicInput {
-        dest_long: input.dest_long,
-        dest_lat: input.dest_lat,
-        distance: input.distance,
+        dest_long,
+        dest_lat,
+        distance
     };
 
-    //env::commit(&public_input);
-    let number: U256 = "5".parse().unwrap();
-    env::commit_slice(number.abi_encode().as_slice());
+    let public_input = public_input.abi_encode();
+    env::commit(&public_input);
 
     let start_long = input.start_long;
     let start_lat = input.start_lat;

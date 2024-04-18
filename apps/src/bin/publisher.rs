@@ -16,6 +16,7 @@
 // to the Bonsai proving service and publish the received proofs directly
 // to your deployed app contract.
 
+use ethers::types::TransactionReceipt;
 use risc0_zkvm::serde::{from_slice, to_vec};
 use alloy_primitives::{FixedBytes, U256};
 use alloy_sol_types::{sol, SolInterface, SolValue};
@@ -25,8 +26,6 @@ use clap::Parser;
 use methods::IS_EVEN_ELF;
 use tokio_util::compat::{FuturesAsyncReadCompatExt, TokioAsyncReadCompatExt};
 use http_body_util::{BodyExt, Empty};
-use hyper::{body::Bytes, Request, StatusCode};
-use hyper_util::rt::TokioIo;
 use std::{env, str};
 use serde_json;
 use serde::{Deserialize, Serialize};
@@ -40,23 +39,23 @@ use axum::{
     Router,
     extract::State,
     Json,
+    http::StatusCode,
+    response::IntoResponse,
 };
 use tower_http::cors::CorsLayer;
 use std::sync::Arc;
 use std::sync::Mutex;
 use tokio::sync::oneshot;
 
+#[derive(Serialize)]
+struct ProveResponse {
+    transaction_hash: String,
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Input {
     start_long: f64,
     start_lat: f64,
-    dest_long: f64,
-    dest_lat: f64,
-    distance: f64,
-}
-
-#[derive(Debug, Serialize, Deserialize, PartialEq)]
-pub struct PublicInput {
     dest_long: f64,
     dest_lat: f64,
     distance: f64,
@@ -73,7 +72,13 @@ struct Payload {
 
 sol! {
     interface IVerifier {
-        function set(uint256 x, bytes32 post_state_digest, bytes calldata seal);
+        function verifyLocation(bytes32 dest_long, bytes32 dest_lat, bytes32 distance, bytes32 post_state_digest, bytes calldata seal);
+    }
+
+    struct PublicInput {
+        bytes32 dest_long;
+        bytes32 dest_lat;
+        bytes32 distance;
     }
 }
 
@@ -112,7 +117,7 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
-async fn prove(Json(payload): Json<Payload>) -> StatusCode {
+async fn prove(Json(payload): Json<Payload>) -> impl IntoResponse {
     println!("Proving");
     let (ip, dest_long, dest_lat, distance) = (payload.ip, payload.longitude, payload.latitude, payload.distance);
 
@@ -135,15 +140,26 @@ async fn prove(Json(payload): Json<Payload>) -> StatusCode {
     });
 
     match rx.await {
-        Ok(_result) => StatusCode::OK,
-        Err(_) => StatusCode::INTERNAL_SERVER_ERROR,
+        Ok(result) => {
+            println!("Transaction hash: {:?}", result.transaction_hash);
+            let response_body = ProveResponse {
+                transaction_hash: result.transaction_hash.to_string(),
+            };
+            (StatusCode::OK, Json(response_body))
+        },
+        Err(_) => {
+            let response_body = ProveResponse {
+                transaction_hash: "".to_string(),
+            };
+            (StatusCode::INTERNAL_SERVER_ERROR, Json(response_body))
+        }
     }
 }
 
 fn prove_and_send_transaction(
     args: Args,
     input: Input,
-    tx: oneshot::Sender<(Vec<u8>, FixedBytes<32>, Vec<u8>)>,
+    tx: oneshot::Sender<TransactionReceipt>,
 ) {
      // Create a new `TxSender`.
      let sender = TxSender::new(
@@ -154,18 +170,14 @@ fn prove_and_send_transaction(
     ).expect("Tx sender");
     let binding = bincode::serialize(&input).unwrap();
     let serialized_input = binding.as_slice();
-    let public_input = PublicInput {
-        dest_long: input.dest_long,
-        dest_lat: input.dest_lat,
-        distance: input.distance,
-    };
     let (journal, post_state_digest, seal) = BonsaiProver::prove(IS_EVEN_ELF, serialized_input).unwrap();
-    // assert!(public_input == from_slice(&journal).unwrap(), "Public input does not match");
     println!("Proved");
     let seal_clone = seal.clone();
-    let x = U256::abi_decode(&journal, true).context("decoding journal data").unwrap();
-    let calldata = IVerifier::IVerifierCalls::set(IVerifier::setCall {
-        x,
+    let public_input = PublicInput::abi_decode(&journal, true).context("decoding journal data").unwrap();
+    let calldata = IVerifier::IVerifierCalls::verifyLocation(IVerifier::verifyLocationCall {
+        dest_long: public_input.dest_long,
+        dest_lat: public_input.dest_lat,
+        distance: public_input.distance,
         post_state_digest,
         seal: seal_clone,
     })
@@ -174,10 +186,12 @@ fn prove_and_send_transaction(
     // Send the calldata to Ethereum.
     println!("Sending calldata");
     let runtime = tokio::runtime::Runtime::new().expect("failed to start new tokio runtime");
-    runtime
+    let tx_result = runtime
         .block_on(sender.send(calldata))
         .expect("failed to send tx");
-
-    tx.send((journal, post_state_digest, seal))
-        .expect("failed to send over channel");
+    let Some(tx_result) = tx_result else {
+        println!("Transaction failed");
+        return;
+    };
+    tx.send(tx_result).expect("failed to send over channel");
 }

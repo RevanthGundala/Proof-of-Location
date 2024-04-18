@@ -25,18 +25,25 @@ contract Verifier {
     /// @notice Image ID of the only zkVM binary to accept verification from.
     bytes32 public constant imageId = ImageID.IS_EVEN_ID;
 
-    uint256 number;
+    // Mapping that shows when the user's location has been verified.
+    mapping(address => mapping(bool => uint256)) public locationVerified;
 
     /// @notice Initialize the contract, binding it to a specified RISC Zero verifier.
     constructor(IRiscZeroVerifier _verifier) {
         verifier = _verifier;
     }
 
-    /// @notice Set the even number stored on the contract. Requires a RISC Zero proof that the number is even.
-    function set(uint256 x, bytes32 postStateDigest, bytes calldata seal) public {
+    /// @notice Using bytes since floating point numbers are not supported in Solidity.
+    function verifyLocation(
+        bytes32 dest_long,
+        bytes32 dest_lat,
+        bytes32 distance,
+        bytes32 postStateDigest,
+        bytes calldata seal
+    ) public {
         // Construct the expected journal data. Verify will fail if journal does not match.
-        bytes memory journal = abi.encode(x);
-        require(verifier.verify(seal, imageId, postStateDigest, sha256(journal)));
-        number = x;
+        bytes memory journal = abi.encode(dest_long, dest_lat, distance);
+        require(verifier.verify(seal, imageId, postStateDigest, sha256(journal)), "Verifier: invalid proof");
+        locationVerified[msg.sender][true] = block.timestamp;
     }
 }

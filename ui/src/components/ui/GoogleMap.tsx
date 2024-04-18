@@ -53,7 +53,7 @@ export default function GoogleMap({
 
   return (
     <APIProvider apiKey="AIzaSyAG_BnN7PTxVwK07qYAoJdgff7jhsxCBV4">
-      <Map zoom={13} center={center}>
+      <Map zoom={10} center={center}>
         <Marker position={center} />
         <CircleComponent center={center} radius={radius} />
       </Map>

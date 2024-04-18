@@ -7,25 +7,14 @@ import { config } from "./layout";
 import { useAccount } from "wagmi";
 import GoogleMap from "@/components/ui/GoogleMap";
 import { Input } from "@/components/ui/input";
-
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { useRouter } from "next/router";
 
 export default function Home() {
-  const [proved, setProved] = useState(false);
   const [distance, setDistance] = useState("1.0");
   const [location, setLocation] = useState("United States");
   const [latitude, setLatitude] = useState("0");
   const [longitude, setLongitude] = useState("0");
+  const router = useRouter();
 
   const account = useAccount({
     config,
@@ -53,8 +42,10 @@ export default function Home() {
         },
         body: JSON.stringify({ ip, longitude, latitude, distance }),
       });
-      const data = await res.text();
+      console.log(res);
+      const data = await res.json();
       console.log(data);
+      return data;
     } catch (e) {
       console.log(e);
       alert("Error creating proof");
@@ -105,15 +96,15 @@ export default function Home() {
             className="w-fit disabled:cursor-not-allowed disabled:opacity-50"
             variant="outline"
             onClick={async (e) => {
-              await prove(e);
-              toast("Proof has been created", {
+              const tx_hash = await prove(e);
+              toast("Proof Successful", {
                 description: "Sunday, December 03, 2023 at 9:00 AM",
                 action: {
-                  label: "Close",
-                  onClick: () => console.log("Closed toast"),
+                  label: "View",
+                  onClick: () => console.log("View"),
+                  //router.push(`https://sepolia.etherscan.io/tx/${tx_hash}`),
                 },
               });
-              setProved(true);
             }}
           >
             Prove
