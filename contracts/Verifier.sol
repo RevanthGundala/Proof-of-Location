@@ -50,7 +50,7 @@ contract Verifier {
         require(distance != bytes32(0), "Verifier: invalid distance");
         // Construct the expected journal data. Verify will fail if journal does not match.
         bytes memory journal = abi.encode(start_long, start_lat, dest_long, dest_lat, distance);
-        // require(verifier.verify(seal, imageId, postStateDigest, sha256(journal)), "Verifier: invalid proof");
+        require(verifier.verify(seal, imageId, postStateDigest, sha256(journal)), "Verifier: invalid proof");
         locationVerified[msg.sender][true] = block.timestamp;
     }
 }

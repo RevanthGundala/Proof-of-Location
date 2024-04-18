@@ -26,9 +26,7 @@ use bonsai_sdk::alpha as bonsai_sdk;
 use ethers::prelude::*;
 use risc0_ethereum_contracts::groth16::Seal;
 use risc0_zkvm::{compute_image_id, Receipt};
-use tlsn_core::proof::{SessionProof, TlsProof};
-use std::{ops::Range, str, time::Duration};
-use elliptic_curve::pkcs8::DecodePublicKey;
+use std::{str, time::Duration};
 
 /// Wrapper of a `SignerMiddleware` client to send transactions to the given
 /// contract's `Address`.
@@ -158,108 +156,5 @@ impl BonsaiProver {
 
         Ok((journal, post_state_digest, seal))
     }
-}
-
-
-/// Find the ranges of the public and private parts of a sequence.
-///
-/// Returns a tuple of `(public, private)` ranges.
-pub fn find_ranges(seq: &[u8], sub_seq: &[&[u8]]) -> (Vec<Range<usize>>, Vec<Range<usize>>) {
-    let mut private_ranges = Vec::new();
-    for s in sub_seq {
-        for (idx, w) in seq.windows(s.len()).enumerate() {
-            if w == *s {
-                private_ranges.push(idx..(idx + w.len()));
-            }
-        }
-    }
-
-    let mut sorted_ranges = private_ranges.clone();
-    sorted_ranges.sort_by_key(|r| r.start);
-
-    let mut public_ranges = Vec::new();
-    let mut last_end = 0;
-    for r in sorted_ranges {
-        if r.start > last_end {
-            public_ranges.push(last_end..r.start);
-        }
-        last_end = r.end;
-    }
-
-    if last_end < seq.len() {
-        public_ranges.push(last_end..seq.len());
-    }
-
-    (public_ranges, private_ranges)
-}
-
-/// Returns a Notary pubkey trusted by this Verifier
-pub fn notary_pubkey() -> p256::PublicKey {
-    let pem_file = str::from_utf8(include_bytes!(
-        "../../tlsn/notary-server/fixture/notary/notary.pub"
-    ))
-    .unwrap();
-    p256::PublicKey::from_public_key_pem(pem_file).unwrap()
-}
-
-pub fn verify_tls_proof(proof: TlsProof) -> Result<()> {
-    // let proof = std::fs::read_to_string("discord_dm_proof.json").unwrap();
-    // let proof: TlsProof = serde_json::from_str(proof.as_str()).unwrap();
-
-    let TlsProof {
-        // The session proof establishes the identity of the server and the commitments
-        // to the TLS transcript.
-        session,
-        // The substrings proof proves select portions of the transcript, while redacting
-        // anything the Prover chose not to disclose.
-        substrings,
-    } = proof;
-
-    // Verify the session proof against the Notary's public key
-    //
-    // This verifies the identity of the server using a default certificate verifier which trusts
-    // the root certificates from the `webpki-roots` crate.
-    session
-        .verify_with_default_cert_verifier(notary_pubkey())
-        .unwrap();
-
-    let SessionProof {
-        // The session header that was signed by the Notary is a succinct commitment to the TLS transcript.
-        header,
-        // This is the session_info, which contains the server_name, that is checked against the
-        // certificate chain shared in te TLS handshake.
-        session_info,
-        ..
-    } = session;
-
-    // The time at which the session was recorded
-    let time = chrono::DateTime::UNIX_EPOCH + Duration::from_secs(header.time());
-
-    // Verify the substrings proof against the session header.
-    //
-    // This returns the redacted transcripts
-    let (mut sent, mut recv) = substrings.verify(&header).unwrap();
-
-    // Replace the bytes which the Prover chose not to disclose with 'X'
-    sent.set_redacted(b'X');
-    recv.set_redacted(b'X');
-
-    println!("-------------------------------------------------------------------");
-    println!(
-        "Successfully verified that the bytes below came from a session with {:?} at {}.",
-        session_info.server_name, time
-    );
-    println!("Note that the bytes which the Prover chose not to disclose are shown as X.");
-    println!();
-    println!("Bytes sent:");
-    println!();
-    print!("{}", String::from_utf8(sent.data().to_vec()).unwrap());
-    println!();
-    println!("Bytes received:");
-    println!();
-    println!("{}", String::from_utf8(recv.data().to_vec()).unwrap());
-    
-    println!("-------------------------------------------------------------------");
-    Ok(())
 }
 
