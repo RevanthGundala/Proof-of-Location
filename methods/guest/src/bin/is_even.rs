@@ -21,6 +21,8 @@ use alloy_primitives::FixedBytes;
 
 sol! {
     struct PublicInput {
+        bytes32 start_long;
+        bytes32 start_lat;
         bytes32 dest_long;
         bytes32 dest_lat;
         bytes32 distance;
@@ -43,18 +45,23 @@ fn main() {
     // Decode and parse the input
     let input: Input = bincode::deserialize(&input_bytes).unwrap();
 
+    // Commit the public input
+    let start_long: FixedBytes<32> = FixedBytes::from_slice(Sha256::digest(input.start_long.to_le_bytes()).as_slice());
+    let start_lat: FixedBytes<32> = FixedBytes::from_slice(Sha256::digest(input.start_lat.to_le_bytes()).as_slice());
     let dest_long: FixedBytes<32> = FixedBytes::from_slice(Sha256::digest(input.dest_long.to_le_bytes()).as_slice());
     let dest_lat: FixedBytes<32> = FixedBytes::from_slice(Sha256::digest(input.dest_lat.to_le_bytes()).as_slice());
     let distance: FixedBytes<32> = FixedBytes::from_slice(Sha256::digest(input.distance.to_le_bytes()).as_slice());
 
     let public_input = PublicInput {
+        start_long,
+        start_lat,
         dest_long,
         dest_lat,
         distance
     };
 
     let public_input = public_input.abi_encode();
-    env::commit(&public_input);
+    env::commit_slice(&public_input);
 
     let start_long = input.start_long;
     let start_lat = input.start_lat;

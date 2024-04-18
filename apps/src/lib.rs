@@ -26,12 +26,9 @@ use bonsai_sdk::alpha as bonsai_sdk;
 use ethers::prelude::*;
 use risc0_ethereum_contracts::groth16::Seal;
 use risc0_zkvm::{compute_image_id, Receipt};
-use tlsn_examples::request_notarization;
 use tlsn_core::proof::{SessionProof, TlsProof};
-use tlsn_prover::tls::{Prover, ProverConfig};
-use std::{env, ops::Range, str, time::Duration};
+use std::{ops::Range, str, time::Duration};
 use elliptic_curve::pkcs8::DecodePublicKey;
-use serde::{Deserialize, Serialize};
 
 /// Wrapper of a `SignerMiddleware` client to send transactions to the given
 /// contract's `Address`.

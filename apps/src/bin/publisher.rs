@@ -17,39 +17,26 @@
 // to your deployed app contract.
 
 use ethers::types::TransactionReceipt;
-use risc0_zkvm::serde::{from_slice, to_vec};
-use alloy_primitives::{FixedBytes, U256};
 use alloy_sol_types::{sol, SolInterface, SolValue};
 use anyhow::{Context, Result};
 use apps::{BonsaiProver, TxSender};
 use clap::Parser;
 use methods::IS_EVEN_ELF;
-use tokio_util::compat::{FuturesAsyncReadCompatExt, TokioAsyncReadCompatExt};
-use http_body_util::{BodyExt, Empty};
-use std::{env, str};
-use serde_json;
+use std::str;
 use serde::{Deserialize, Serialize};
-use dotenv;
-use tlsn_examples::request_notarization;
-use tlsn_core::proof::TlsProof;
-use tlsn_prover::tls::{Prover, ProverConfig};
-use apps::{verify_tls_proof, find_ranges};
 use axum::{
     routing::post,
     Router,
-    extract::State,
     Json,
     http::StatusCode,
     response::IntoResponse,
 };
 use tower_http::cors::CorsLayer;
-use std::sync::Arc;
-use std::sync::Mutex;
 use tokio::sync::oneshot;
 
 #[derive(Serialize)]
 struct ProveResponse {
-    transaction_hash: String,
+    tx_receipt: TransactionReceipt,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -72,10 +59,12 @@ struct Payload {
 
 sol! {
     interface IVerifier {
-        function verifyLocation(bytes32 dest_long, bytes32 dest_lat, bytes32 distance, bytes32 post_state_digest, bytes calldata seal);
+        function verifyLocation(bytes32 start_long, bytes32 start_lat, bytes32 dest_long, bytes32 dest_lat, bytes32 distance, bytes32 post_state_digest, bytes calldata seal);
     }
 
     struct PublicInput {
+        bytes32 start_long;
+        bytes32 start_lat;
         bytes32 dest_long;
         bytes32 dest_lat;
         bytes32 distance;
@@ -143,13 +132,13 @@ async fn prove(Json(payload): Json<Payload>) -> impl IntoResponse {
         Ok(result) => {
             println!("Transaction hash: {:?}", result.transaction_hash);
             let response_body = ProveResponse {
-                transaction_hash: result.transaction_hash.to_string(),
+                tx_receipt: result,
             };
             (StatusCode::OK, Json(response_body))
         },
         Err(_) => {
             let response_body = ProveResponse {
-                transaction_hash: "".to_string(),
+                tx_receipt: TransactionReceipt::default(),
             };
             (StatusCode::INTERNAL_SERVER_ERROR, Json(response_body))
         }
@@ -175,6 +164,8 @@ fn prove_and_send_transaction(
     let seal_clone = seal.clone();
     let public_input = PublicInput::abi_decode(&journal, true).context("decoding journal data").unwrap();
     let calldata = IVerifier::IVerifierCalls::verifyLocation(IVerifier::verifyLocationCall {
+        start_long: public_input.start_long,
+        start_lat: public_input.start_lat,
         dest_long: public_input.dest_long,
         dest_lat: public_input.dest_lat,
         distance: public_input.distance,

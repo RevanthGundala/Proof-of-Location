@@ -7,7 +7,7 @@ import { config } from "./layout";
 import { useAccount } from "wagmi";
 import GoogleMap from "@/components/ui/GoogleMap";
 import { Input } from "@/components/ui/input";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [distance, setDistance] = useState("1.0");
@@ -45,7 +45,7 @@ export default function Home() {
       console.log(res);
       const data = await res.json();
       console.log(data);
-      return data;
+      return data.tx_receipt.transactionHash;
     } catch (e) {
       console.log(e);
       alert("Error creating proof");
@@ -78,7 +78,7 @@ export default function Home() {
 
           <div className="flex flex-col space-y-6">
             <Input
-              className="w-1/4"
+              className="w-1/4 "
               type="Miles"
               placeholder="1.0"
               onChange={(e) => setDistance(e.target.value)}
@@ -97,14 +97,25 @@ export default function Home() {
             variant="outline"
             onClick={async (e) => {
               const tx_hash = await prove(e);
-              toast("Proof Successful", {
-                description: "Sunday, December 03, 2023 at 9:00 AM",
-                action: {
-                  label: "View",
-                  onClick: () => console.log("View"),
-                  //router.push(`https://sepolia.etherscan.io/tx/${tx_hash}`),
-                },
-              });
+              if (tx_hash === "") {
+                toast("Proof Failed", {
+                  description: "Sunday, December 03, 2023 at 9:00 AM",
+                  action: {
+                    label: "Close",
+                    onClick: () => console.log("Close"),
+                  },
+                });
+              } else {
+                toast("Proof Successful", {
+                  description: "Sunday, December 03, 2023 at 9:00 AM",
+                  action: {
+                    label: "View",
+                    onClick: () => {
+                      router.push(`https://sepolia.etherscan.io/tx/${tx_hash}`);
+                    },
+                  },
+                });
+              }
             }}
           >
             Prove
