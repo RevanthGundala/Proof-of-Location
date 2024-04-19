@@ -113,7 +113,6 @@ async fn prove(Json(payload): Json<Payload>) -> impl IntoResponse {
     let start_long = geolocation::find(ip.as_str()).unwrap().longitude;
     let start_lat = geolocation::find(ip.as_str()).unwrap().latitude;
 
-    // TODO: Find the distance between the user's location and the destination location
     // Send an off-chain proof request to the Bonsai proving service.
     let (tx, rx) = oneshot::channel();
     let input = Input {
