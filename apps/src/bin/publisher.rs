@@ -21,7 +21,7 @@ use alloy_sol_types::{sol, SolInterface, SolValue};
 use anyhow::{Context, Result};
 use apps::{BonsaiProver, TxSender};
 use clap::Parser;
-use methods::IS_EVEN_ELF;
+use methods::IS_LOCATED_ELF;
 use std::str;
 use serde::{Deserialize, Serialize};
 use axum::{
@@ -158,7 +158,7 @@ fn prove_and_send_transaction(
     ).expect("Tx sender");
     let binding = bincode::serialize(&input).unwrap();
     let serialized_input = binding.as_slice();
-    let (journal, post_state_digest, seal) = BonsaiProver::prove(IS_EVEN_ELF, serialized_input).unwrap();
+    let (journal, post_state_digest, seal) = BonsaiProver::prove(IS_LOCATED_ELF, serialized_input).unwrap();
     println!("Proved");
     let seal_clone = seal.clone();
     let public_input = PublicInput::abi_decode(&journal, true).context("decoding journal data").unwrap();

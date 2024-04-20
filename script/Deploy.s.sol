@@ -43,7 +43,7 @@ contract EvenNumberDeploy is Script {
         // console2.log("Deployed EvenNumber to", address(evenNumber));
 
         Verifier myVerifier = new Verifier(verifier);
-        console2.log("Deployed EvenNumber to", address(myVerifier));
+        console2.log("Deployed Verifier to", address(myVerifier));
 
         vm.stopBroadcast();
     }

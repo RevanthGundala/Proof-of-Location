@@ -8,12 +8,14 @@ import { useAccount } from "wagmi";
 import GoogleMap from "@/components/ui/GoogleMap";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
+import { useSignMessage } from "wagmi";
 
 export default function Home() {
   const [distance, setDistance] = useState("1.0");
   const [location, setLocation] = useState("United States");
   const [latitude, setLatitude] = useState("0");
   const [longitude, setLongitude] = useState("0");
+  const { signMessageAsync } = useSignMessage();
   const router = useRouter();
 
   const account = useAccount({
@@ -96,6 +98,7 @@ export default function Home() {
             className="w-fit disabled:cursor-not-allowed disabled:opacity-50"
             variant="outline"
             onClick={async (e) => {
+              // await signMessageAsync({ message: `I am within ${distance} of ${location}` })
               const tx_hash = await prove(e);
               if (tx_hash === "") {
                 toast("Proof Failed", {
