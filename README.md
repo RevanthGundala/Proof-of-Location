@@ -2,6 +2,9 @@
 
 This project demonstrates how one can prove their location within a certain range of a destination.
 
+This project was created as a part of the scaling-eth-hackathon, winning a bounty from Avail.
+https://ethglobal.com/showcase/proof-of-location-wrxsq
+
 ## Deployed Contracts
 
 ### Arbitrum Sepolia
